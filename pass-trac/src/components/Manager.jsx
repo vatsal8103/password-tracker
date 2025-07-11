@@ -2,6 +2,7 @@ import React from 'react'
 import { useRef, useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { v4 as uuidv4 } from 'uuid';
 
 const Manager = () => {
     const ref = useRef()
@@ -28,7 +29,7 @@ const Manager = () => {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "dark",
 
         });
         navigator.clipboard.writeText(text)
@@ -49,9 +50,46 @@ const Manager = () => {
 
     }
     const savepassword = () => {
-        setpasswordarray([...passwordarray, form])
-        localStorage.setItem("passwords", JSON.stringify([...passwordarray, form]))
+        toast('password saved  !', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+
+        });
+        setpasswordarray([...passwordarray, {...form , id:uuidv4()}])
+        localStorage.setItem("passwords", JSON.stringify([...passwordarray, {...form , id:uuidv4()}]))
         console.log(...passwordarray, form);
+        setform({ site: "", username: "", password: "" })
+
+    }
+    const deletepassword = (id) => {
+        console.log("deleting the id ",id)
+        setpasswordarray(passwordarray.filter(item=>item.id!== id))
+        localStorage.setItem("passwords", JSON.stringify(passwordarray.filter(item=>item.id!== id)))
+        // console.log(...passwordarray, form);
+        toast('Password deleted!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+
+        });
+
+    }
+    const editpassword = (id) => {
+        console.log("editing the id ",id)
+        setform(passwordarray.filter(i=>i.id===id)[0] )
+
+        setpasswordarray(passwordarray.filter(item=>item.id!== id))
 
     }
     const handlechange = (e) => {
@@ -74,7 +112,7 @@ const Manager = () => {
 
             />
             <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
-            <div className="  b mycontainer">
+            <div className=" px-2 md:p-0 md:mycontainer">
                 <h1 className=' text-4xl text font-bold text-center'>
                     <span className='text-purple-700'>&lt;Pass-</span>
                     <span className='text-green-500'>Trac/&gt;</span></h1>
@@ -82,7 +120,7 @@ const Manager = () => {
 
                 <div className=" flex flex-col p-4 text-black gap-8 items-center">
                     <input value={form.site} onChange={handlechange} placeholder='Enter URL' className="rounded-full border  border-green-500 w-full text-black bg-slate-500 p-4 py-1" type="text" name='site' />
-                    <div className="flex w-full justify-between gap-8">
+                    <div className="flex flex-col md:flex-row w-full justify-between gap-8">
                         <input value={form.username} onChange={handlechange} placeholder='Enter USERNAME' className="rounded-full border border-green-500 w-full text-black bg-slate-500 p-4 py-1" type="text" name='username' />
                         <div className="relative">
 
@@ -99,20 +137,20 @@ const Manager = () => {
                             src="https://cdn.lordicon.com/efxgwrkc.json"
                             trigger="hover">
                         </lord-icon>
-                        Add Password </button>
+                        Save  </button>
 
 
                 </div>
                 <div className="passwords">
                     <h2 className='font-bold text-2xl text-purple-400  py-4'>Your passwords</h2>
-                    {passwordarray.length === 0 && <div> No passwords to show</div>}
-                    {passwordarray.length != 0 && (<table className='table-auto w-full rounded-md overflow-hidden'>
-                        <table className='table-auto w-full rounded-md overflow-hidden shadow-lg'>
+                    {passwordarray.length === 0 && <div className='text-green-500'> No passwords to show</div>}
+                    {passwordarray.length != 0 && (<table className='table-auto w-full rounded-md overflow-hidden shadow-lg'>
                             <thead className='text-center text--white bg-green-800'>
                                 <tr className='bg-green-800 text-white'>
                                     <th className='py-2'>Site</th>
                                     <th className='py-2'>Username</th>
                                     <th className='py-2'>Password</th>
+                                    <th className="py-2">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className='bg-green-200'>
@@ -172,9 +210,16 @@ const Manager = () => {
                                             </div>
                                         </td>
                                         <td className="py-2  justify-center  border border-white text-center ">
-                                            <span>
+                                            <span className=' cursor-pointer mx-1' onClick={()=>{editpassword(item.id)}}>
                                                 <lord-icon
                                                     src="https://cdn.Lordicon.com/gwlusjdu.json"
+                                                    trigger ="hover"
+                                                    style={{"width": "25px","height":"25px"}}>
+                                                </lord-icon>
+                                            </span>
+                                            <span className=' cursor-pointer mx-1'onClick={()=>{deletepassword(item.id)}}>
+                                                <lord-icon
+                                                    src="https://cdn.lordicon.com/skkahier.json"
                                                     trigger ="hover"
                                                     style={{"width": "25px","height":"25px"}}>
                                                 </lord-icon>
@@ -188,7 +233,7 @@ const Manager = () => {
                             </tbody>
 
                         </table>
-                    </table>)}
+                    )}
                 </div>
             </div>
         </>
