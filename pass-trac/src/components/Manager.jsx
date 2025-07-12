@@ -50,6 +50,12 @@ const Manager = () => {
 
     }
     const savepassword = () => {
+        if(form.site.length >3 && form.username.length >3 && form.password.length >3){
+            setpasswordarray([...passwordarray, {...form , id:uuidv4()}])
+            localStorage.setItem("passwords", JSON.stringify([...passwordarray, {...form , id:uuidv4()}]))
+            console.log(...passwordarray, form);
+            setform({ site: "", username: "", password: "" })
+
         toast('password saved  !', {
             position: "top-right",
             autoClose: 5000,
@@ -61,10 +67,10 @@ const Manager = () => {
             theme: "dark",
 
         });
-        setpasswordarray([...passwordarray, {...form , id:uuidv4()}])
-        localStorage.setItem("passwords", JSON.stringify([...passwordarray, {...form , id:uuidv4()}]))
-        console.log(...passwordarray, form);
-        setform({ site: "", username: "", password: "" })
+    }else{
+        toast("Error : passowrd not saved!");
+        
+    }
 
     }
     const deletepassword = (id) => {
@@ -112,7 +118,8 @@ const Manager = () => {
 
             />
             <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
-            <div className=" px-2 md:p-0 md:mycontainer">
+            <div className="max-w-4xl mx-auto p-4 min-h-[88vh]">
+
                 <h1 className=' text-4xl text font-bold text-center'>
                     <span className='text-purple-700'>&lt;Pass-</span>
                     <span className='text-green-500'>Trac/&gt;</span></h1>
@@ -144,7 +151,7 @@ const Manager = () => {
                 <div className="passwords">
                     <h2 className='font-bold text-2xl text-purple-400  py-4'>Your passwords</h2>
                     {passwordarray.length === 0 && <div className='text-green-500'> No passwords to show</div>}
-                    {passwordarray.length != 0 && (<table className='table-auto w-full rounded-md overflow-hidden shadow-lg'>
+                    {passwordarray.length != 0 && (<table className='table-auto w-full rounded-md overflow-hidden shadow-lg mb-10'>
                             <thead className='text-center text--white bg-green-800'>
                                 <tr className='bg-green-800 text-white'>
                                     <th className='py-2'>Site</th>
